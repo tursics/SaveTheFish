@@ -1,3 +1,6 @@
+/*jslint browser: true*/
+/*global $,THREE */
+
 var PLANE_WIDTH = 50,
     PLANE_LENGTH = 1000,
     PADDING = PLANE_WIDTH / 5 * 2,
@@ -5,7 +8,7 @@ var PLANE_WIDTH = 50,
 
 var axishelper = {},
     camera = {},
-		$container = {},
+	$container = {},
     controls = {},
     containerWidth = 0,
     containerHeight = 0,
@@ -18,8 +21,8 @@ var axishelper = {},
     plane = {},
     planeGeometry = {},
     planeMaterial = {},
-    powerup = {},	
-		powerups = [],
+    powerup = {},
+	powerups = [],
     powerupSpawnIntervalID = {},
     powerupCounterIntervalID = {},
     queue = {},
@@ -30,125 +33,139 @@ var axishelper = {},
     skyMaterial = {},
     skyTexture = {};
 
-function render () {
-  globalRenderID = requestAnimationFrame( render );
-  controls.update(); 
-  
-  powerups.forEach( function ( element, index ) {
-    powerups[ index ].animate();
-  });
-  
-  mountains.forEach( function ( element, index ) {
-    mountains[ index ].animate();
-  });
-  
-  if ( detectCollisions( powerups ) === true ) {
-    gameOver();
-  }
-  
-	renderer.render( scene, camera );
+function render() {
+	'use strict';
+	globalRenderID = requestAnimationFrame(render);
+	controls.update();
+
+	powerups.forEach(function (element, index) {
+		powerups[index].animate();
+	});
+
+	mountains.forEach(function (element, index) {
+		mountains[index].animate();
+	});
+
+	if (detectCollisions(powerups) === true) {
+		gameOver();
+	}
+
+	renderer.render(scene, camera);
 }
 
-function gameOver () {
-  cancelAnimationFrame( globalRenderID );
-  window.clearInterval( powerupSpawnIntervalID );
-  window.clearInterval( powerupCounterIntervalID );
-  
-  $( '#overlay-gameover' ).fadeIn( 100 );
-  
-  $( '#btn-restart' ).one( 'click', function () {
-    $( '#overlay-gameover' ).fadeOut( 50 );
-    POWERUP_COUNT = 10;
-    powerups.forEach( function ( element, index ) {
-      scene.remove( powerups[ index ] );
-    }); 
-    powerups = [];
-    hero.position.x = 0;
-    render();
-    startPowerupLogic();
-  } );
+function gameOver() {
+	'use strict';
+	cancelAnimationFrame(globalRenderID);
+	window.clearInterval(powerupSpawnIntervalID);
+	window.clearInterval(powerupCounterIntervalID);
+
+	$('#overlay-gameover').fadeIn(100);
+
+	$('#btn-restart').one('click', function () {
+		$('#overlay-gameover').fadeOut(50);
+		POWERUP_COUNT = 10;
+		powerups.forEach(function (element, index) {
+			scene.remove(powerups[index]);
+		});
+		powerups = [];
+		hero.position.x = 0;
+		render();
+		startPowerupLogic();
+	});
 }
 
-function onWindowResize () {
-  containerWidth = $container.innerWidth();
+function onWindowResize() {
+	'use strict';
+	containerWidth = $container.innerWidth();
 	containerHeight = $container.innerHeight();
-  camera.aspect = containerWidth / containerHeight;
+	camera.aspect = containerWidth / containerHeight;
 	camera.updateProjectionMatrix();
-  renderer.clear();
-	renderer.setSize( containerWidth, containerHeight );
+	renderer.clear();
+	renderer.setSize(containerWidth, containerHeight);
 }
 
-function detectCollisions( objects ) {
-  var origin = hero.position.clone();
+function detectCollisions(objects) {
+	'use strict';
+	var origin = hero.position.clone(),
+		v = 0,
+		vMax = 0,
+		localVertex,
+		globalVertex,
+		directionVector,
+		ray,
+		intersections;
 
-  for ( var v = 0, vMax = hero.geometry.vertices.length; v < vMax; v += 1 ) {       
-    var localVertex = hero.geometry.vertices[ v ].clone();
-    var globalVertex = localVertex.applyMatrix4( hero.matrix );
-    var directionVector = globalVertex.sub( hero.position );
+	for (v = 0, vMax = hero.geometry.vertices.length; v < vMax; v += 1) {
+		localVertex = hero.geometry.vertices[v].clone();
+		globalVertex = localVertex.applyMatrix4(hero.matrix);
+		directionVector = globalVertex.sub(hero.position);
 
-    var ray = new THREE.Raycaster( origin, directionVector.clone().normalize() );
-    var intersections = ray.intersectObjects( objects );
-    if ( intersections.length > 0 && 
-        intersections[ 0 ].distance < directionVector.length() ) {
-      return true;
-    }
-  }
-  return false;
-}  
-
-function getRandomInteger( min, max ) {
-  return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+		ray = new THREE.Raycaster(origin, directionVector.clone().normalize());
+		intersections = ray.intersectObjects(objects);
+		if (intersections.length > 0 && intersections[0].distance < directionVector.length()) {
+			return true;
+		}
+	}
+	return false;
 }
 
-function Hero () {
-  var hero = {},
-      heroGeometry = {},
-      heroMaterial = {};
-  
-  heroGeometry = new THREE.CylinderGeometry( 0, 2, 5, 10 );
-  heroMaterial = new THREE.MeshLambertMaterial( {
-    color: 0xE91E63,
-    shading: THREE.FlatShading
-  } );
-  hero = new THREE.Mesh( heroGeometry, heroMaterial );
-  hero.castShadow = true;
-  hero.position.set( 0, 5, ( PLANE_LENGTH / 2 ) );
-  hero.rotation.x = 0.785;
-  
-  window.addEventListener( 'keydown', function () {
-    if ( event.keyCode === 37 && hero.position.x !== -( PLANE_WIDTH - PADDING ) / 2 ) {
-      hero.position.x -= ( PLANE_WIDTH - PADDING ) / 2;
-    } else if ( event.keyCode === 39 && hero.position.x !== ( PLANE_WIDTH - PADDING ) / 2 ) {
-      hero.position.x += ( PLANE_WIDTH - PADDING ) / 2;
-    }
-  } );
-  
-  return hero;
+function getRandomInteger(min, max) {
+	'use strict';
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function createLandscapeFloors () {
-  var planeLeft = {},
-      planeLeftGeometry = {},
-      planeLeftMaterial = {},
-      planeRight = {};
-  
-  planeLeftGeometry = new THREE.BoxGeometry( PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1 );
-  planeLeftMaterial = new THREE.MeshLambertMaterial( {
-    color: 0x8BC34A
-  } );
-  planeLeft = new THREE.Mesh( planeLeftGeometry, planeLeftMaterial );
-  planeLeft.receiveShadow = true;
+function Hero() {
+	'use strict';
+	var hero = {},
+		heroGeometry = {},
+		heroMaterial = {};
+
+	heroGeometry = new THREE.CylinderGeometry(0, 2, 5, 10);
+	heroMaterial = new THREE.MeshLambertMaterial({
+		color: 0xE91E63,
+		shading: THREE.FlatShading
+	});
+	hero = new THREE.Mesh(heroGeometry, heroMaterial);
+	hero.castShadow = true;
+	hero.position.set(0, 5, (PLANE_LENGTH / 2));
+	hero.rotation.x = 0.785;
+
+	window.addEventListener('keydown', function (event) {
+		if (event.keyCode === 37 && hero.position.x !== -(PLANE_WIDTH - PADDING) / 2) {
+			hero.position.x -= (PLANE_WIDTH - PADDING) / 2;
+		} else if (event.keyCode === 39 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
+			hero.position.x += (PLANE_WIDTH - PADDING) / 2;
+		}
+	});
+
+	return hero;
+}
+
+function createLandscapeFloors() {
+	'use strict';
+	var planeLeft = {},
+		planeLeftGeometry = {},
+		planeLeftMaterial = {},
+		planeRight = {};
+
+	planeLeftGeometry = new THREE.BoxGeometry(PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1);
+	planeLeftMaterial = new THREE.MeshLambertMaterial({
+		color: 0x8BC34A
+	});
+	planeLeft = new THREE.Mesh(planeLeftGeometry, planeLeftMaterial);
+	planeLeft.receiveShadow = true;
 	planeLeft.rotation.x = 1.570;
-  planeLeft.position.x = -PLANE_WIDTH;
-  planeLeft.position.y = 1;
-  
-  planeRight = planeLeft.clone();
-  planeRight.position.x = PLANE_WIDTH;
-  
-  scene.add( planeLeft, planeRight );
+	planeLeft.position.x = -PLANE_WIDTH;
+	planeLeft.position.y = 1;
+
+	planeRight = planeLeft.clone();
+	planeRight.position.x = PLANE_WIDTH;
+
+	scene.add(planeLeft, planeRight);
 }
 
 function createMountain ( i, isEast ) {
+	'use strict';
   var loader = {},
       prototype = {},
       object = {},
