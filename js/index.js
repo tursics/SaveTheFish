@@ -5,7 +5,8 @@ var PLANE_WIDTH = 50,
     PLANE_LENGTH = 1000,
     PADDING = PLANE_WIDTH / 5 * 2,
     POWERUP_COUNT = 10,
-	PLANE_INDESTRUCTIBLE = false;
+	PLANE_INDESTRUCTIBLE = true,
+	SHOW_STEREO_EFFEKT = false;
 
 var axishelper = {},
     camera = {},
@@ -14,6 +15,7 @@ var axishelper = {},
     containerWidth = 0,
     containerHeight = 0,
     directionalLight = {},
+	effect = {},
     globalRenderID = {},
     hero = {},
     hemisphereLight = {},
@@ -84,6 +86,51 @@ function PowerUp() {
 	return object;
 }
 
+function FishObject() {
+	'use strict';
+	var object = {},
+		objectDimension = 0,
+		objectGeometry = {},
+		objectMaterial = {},
+		xPosition = 0,
+		xPositionValues = [],
+		yPosition = 0,
+		yPositionValues = [],
+		zPosition = 0,
+		zPositionValues = [];
+
+	objectDimension = 2;
+
+	xPositionValues = [ -(PLANE_WIDTH - PADDING) / 2, 0, (PLANE_WIDTH - PADDING) / 2];
+	yPositionValues = [ objectDimension + 1 ];
+	zPositionValues = [ -(PLANE_LENGTH - PADDING) / 2];
+
+	xPosition = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
+	yPosition = yPositionValues[getRandomInteger(0, yPositionValues.length - 1)];
+	zPosition = zPositionValues[getRandomInteger(0, zPositionValues.length - 1)];
+
+	objectGeometry = new THREE.BoxGeometry(objectDimension, objectDimension, objectDimension, objectDimension);
+	objectMaterial = new THREE.MeshLambertMaterial({
+		color: 0xF629B6,
+		shading: THREE.FlatShading
+	});
+	object = new THREE.Mesh(objectGeometry, objectMaterial);
+	object.position.set(xPosition, yPosition, zPosition);
+	object.castShadow = true;
+	object.receiveShadow = true;
+
+	object.animate = function () {
+		if (object.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+			object.position.z += 10;
+		} else {
+			object.position.x = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
+			object.position.z = -PLANE_LENGTH / 2;
+		}
+	};
+
+	return object;
+}
+
 function detectCollisions(objects) {
 	'use strict';
 	var origin = hero.position.clone(),
@@ -113,7 +160,12 @@ function startPowerupLogic() {
 	'use strict';
 	powerupSpawnIntervalID = window.setInterval(function () {
 		if (powerups.length < POWERUP_COUNT) {
-			powerup = new PowerUp();
+			var kind = getRandomInteger(0, 2);
+			if (0 === kind) {
+				powerup = new FishObject();
+			} else {
+				powerup = new PowerUp();
+			}
 			powerups.push(powerup);
 			scene.add(powerup);
 		}
@@ -142,7 +194,11 @@ function render() {
 		gameOver();
 	}
 
-	renderer.render(scene, camera);
+	if (SHOW_STEREO_EFFEKT) {
+		effect.render(scene, camera);
+	} else {
+		renderer.render(scene, camera);
+	}
 }
 
 function gameOver() {
@@ -324,6 +380,10 @@ function initGame() {
 	renderer.shadowMapEnabled = true;
 	renderer.shadowMapSoft = true;
 	$container.get(0).appendChild(renderer.domElement);
+
+	if (SHOW_STEREO_EFFEKT) {
+		effect = new THREE.StereoEffect(renderer);
+	}
 
 	scene = new THREE.Scene();
 
