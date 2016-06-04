@@ -4,7 +4,8 @@
 var PLANE_WIDTH = 50,
     PLANE_LENGTH = 1000,
     PADDING = PLANE_WIDTH / 5 * 2,
-    POWERUP_COUNT = 10;
+    POWERUP_COUNT = 10,
+	PLANE_INDESTRUCTIBLE = false;
 
 var axishelper = {},
     camera = {},
@@ -137,7 +138,7 @@ function render() {
 		mountains[index].animate();
 	});
 
-	if (detectCollisions(powerups) === true) {
+	if ((PLANE_INDESTRUCTIBLE === false) && (detectCollisions(powerups) === true)) {
 		gameOver();
 	}
 
