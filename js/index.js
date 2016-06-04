@@ -126,7 +126,7 @@ function startPowerupLogic() {
 
 function render() {
 	'use strict';
-	globalRenderID = requestAnimationFrame(render);
+	globalRenderID = window.requestAnimationFrame(render);
 	controls.update();
 
 	powerups.forEach(function (element, index) {
@@ -147,7 +147,7 @@ function render() {
 function gameOver() {
 	'use strict';
 
-	cancelAnimationFrame(globalRenderID);
+	window.cancelAnimationFrame(globalRenderID);
 	window.clearInterval(powerupSpawnIntervalID);
 	window.clearInterval(powerupCounterIntervalID);
 
