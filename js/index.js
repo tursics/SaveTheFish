@@ -5,7 +5,7 @@ var PLANE_WIDTH = 50,
     PLANE_LENGTH = 1000,
     PADDING = PLANE_WIDTH / 5 * 2,
     POWERUP_COUNT = 10,
-	PLANE_INDESTRUCTIBLE = true,
+	PLANE_INDESTRUCTIBLE = false,
 	SHOW_STEREO_EFFEKT = false;
 
 var axishelper = {},
