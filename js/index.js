@@ -214,188 +214,184 @@ function createMountain(i, isEast) {
 	);
 }
 
-function createSpotlights () {
+function createSpotlights() {
 	'use strict';
-  var spotLight = {},
-      target = {},
-      targetGeometry = {},
-      targetMaterial = {};
-  for ( var i = 0; i < 5; i += 1 ) {
-    targetGeometry = new THREE.BoxGeometry(1, 1, 1);
-    targetMaterial = new THREE.MeshNormalMaterial();
-    target = new THREE.Mesh( targetGeometry, targetMaterial );
-    target.position.set( 0, 2, ( i * PLANE_LENGTH / 5 ) - ( PLANE_LENGTH / 2.5 ) );
-    target.visible = false;
-    scene.add( target );
-    
-    spotLight = new THREE.SpotLight( 0xFFFFFF, 2 );
-    spotLight.position.set( 150, ( i * PLANE_LENGTH / 5 ) - ( PLANE_LENGTH / 2.5 ), -200 );
-    spotLight.castShadow = true;
-    spotLight.shadowCameraNear = 10;
-    spotLight.shadowCameraVisible = false;
-    spotLight.target = target;
-    spotLight.shadowMapWidth = 2048;
-    spotLight.shadowMapHeight = 2048;
-    spotLight.fov = 40;
-    
-    plane.add( spotLight );
-  }
+	var spotLight = {},
+		target = {},
+		targetGeometry = {},
+		targetMaterial = {},
+		i = 0;
+	for (i = 0; i < 5; i += 1) {
+		targetGeometry = new THREE.BoxGeometry(1, 1, 1);
+		targetMaterial = new THREE.MeshNormalMaterial();
+		target = new THREE.Mesh(targetGeometry, targetMaterial);
+		target.position.set(0, 2, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5));
+		target.visible = false;
+		scene.add(target);
+
+		spotLight = new THREE.SpotLight(0xFFFFFF, 2);
+		spotLight.position.set(150, (i * PLANE_LENGTH / 5) - (PLANE_LENGTH / 2.5), -200);
+		spotLight.castShadow = true;
+		spotLight.shadowCameraNear = 10;
+		spotLight.shadowCameraVisible = false;
+		spotLight.target = target;
+		spotLight.shadowMapWidth = 2048;
+		spotLight.shadowMapHeight = 2048;
+		spotLight.fov = 40;
+
+		plane.add(spotLight);
+	}
 }
 
-function PowerUp () {
-  var object = {},
-      objectDimension = 0,
-      objectGeometry = {},
-      objectMaterial = {},
-      xPosition = 0,
-      xPositionValues = [],
-      yPosition = 0,
-      yPositionValues = [],
-      zPosition = 0,
-      zPositionValues = [];
-  
-  objectDimension = 2;
-  
-  xPositionValues = [ -( PLANE_WIDTH - PADDING ) / 2, 0, ( PLANE_WIDTH - PADDING ) / 2 ];
-  yPositionValues = [ objectDimension + 1 ];
-  zPositionValues = [ -( PLANE_LENGTH - PADDING ) / 2 ];
-  
-  xPosition = xPositionValues[ getRandomInteger( 0, xPositionValues.length - 1 ) ];
-  yPosition = yPositionValues[ getRandomInteger( 0, yPositionValues.length - 1 ) ];
-  zPosition = zPositionValues[ getRandomInteger( 0, zPositionValues.length - 1 ) ];
-  
-  objectGeometry = new THREE.BoxGeometry( objectDimension, objectDimension, objectDimension, objectDimension );
-  objectMaterial = new THREE.MeshLambertMaterial( {
-    color: 0x29B6F6,
-  	shading: THREE.FlatShading
-  } );
-  object = new THREE.Mesh( objectGeometry, objectMaterial );
-  object.position.set( xPosition, yPosition, zPosition );
-  object.castShadow = true;
-  object.receiveShadow = true;
-  
-  object.animate = function () {
-    
-    if ( object.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10 ) {
-      object.position.z += 10;
-    } else {
-      object.position.x = xPositionValues[ getRandomInteger( 0, xPositionValues.length - 1 ) ];
-      object.position.z = -PLANE_LENGTH / 2;
-    }
-    
-  }
-  
-  return object;
+function PowerUp() {
+	'use strict';
+	var object = {},
+		objectDimension = 0,
+		objectGeometry = {},
+		objectMaterial = {},
+		xPosition = 0,
+		xPositionValues = [],
+		yPosition = 0,
+		yPositionValues = [],
+		zPosition = 0,
+		zPositionValues = [];
+
+	objectDimension = 2;
+
+	xPositionValues = [ -(PLANE_WIDTH - PADDING) / 2, 0, (PLANE_WIDTH - PADDING) / 2];
+	yPositionValues = [ objectDimension + 1 ];
+	zPositionValues = [ -(PLANE_LENGTH - PADDING) / 2];
+
+	xPosition = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
+	yPosition = yPositionValues[getRandomInteger(0, yPositionValues.length - 1)];
+	zPosition = zPositionValues[getRandomInteger(0, zPositionValues.length - 1)];
+
+	objectGeometry = new THREE.BoxGeometry(objectDimension, objectDimension, objectDimension, objectDimension);
+	objectMaterial = new THREE.MeshLambertMaterial({
+		color: 0x29B6F6,
+		shading: THREE.FlatShading
+	});
+	object = new THREE.Mesh(objectGeometry, objectMaterial);
+	object.position.set(xPosition, yPosition, zPosition);
+	object.castShadow = true;
+	object.receiveShadow = true;
+
+	object.animate = function () {
+		if (object.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
+			object.position.z += 10;
+		} else {
+			object.position.x = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
+			object.position.z = -PLANE_LENGTH / 2;
+		}
+	};
+
+	return object;
 }
 
-function startPowerupLogic () {
-  powerupSpawnIntervalID = window.setInterval( function () {
-  
-    if ( powerups.length < POWERUP_COUNT ) {
-      powerup = new PowerUp();
-      powerups.push( powerup );
-      scene.add( powerup );
-    }
+function startPowerupLogic() {
+	'use strict';
+	powerupSpawnIntervalID = window.setInterval(function () {
+		if (powerups.length < POWERUP_COUNT) {
+			powerup = new PowerUp();
+			powerups.push(powerup);
+			scene.add(powerup);
+		}
 
-  }, 4000 );
+	}, 4000);
 
-  powerupCounterIntervalID = window.setInterval( function () {
-    POWERUP_COUNT += 1;
-  }, 30000 );
+	powerupCounterIntervalID = window.setInterval(function () {
+		POWERUP_COUNT += 1;
+	}, 30000);
 }
 
-function initGame () {
-  THREE.ImageUtils.crossOrigin = '';
+function initGame() {
+	'use strict';
+	var i = 0,
+		isEast = false;
 
-  $container = $( '#container' );
-  containerWidth = $container.innerWidth();
-  containerHeight = $container.innerHeight();
+	THREE.ImageUtils.crossOrigin = '';
 
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize( containerWidth, containerHeight );
-  renderer.antialias = true;
-  renderer.setClearColor( 0xFFFFFF, 1 );
-  renderer.shadowMapEnabled = true;
-  renderer.shadowMapSoft = true;
-  $container.get( 0 ).appendChild( renderer.domElement );
+	$container = $('#container');
+	containerWidth = $container.innerWidth();
+	containerHeight = $container.innerHeight();
 
-  scene = new THREE.Scene();
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(containerWidth, containerHeight);
+	renderer.antialias = true;
+	renderer.setClearColor(0xFFFFFF, 1);
+	renderer.shadowMapEnabled = true;
+	renderer.shadowMapSoft = true;
+	$container.get(0).appendChild(renderer.domElement);
 
-  axishelper = new THREE.AxisHelper( PLANE_LENGTH / 2 );
+	scene = new THREE.Scene();
 
+	axishelper = new THREE.AxisHelper(PLANE_LENGTH / 2);
 
-  /* CAMERA */
-  camera = new THREE.PerspectiveCamera( 45, containerWidth / containerHeight, 1, 3000 );
-  camera.position.set( 0, PLANE_LENGTH / 125, PLANE_LENGTH / 2 + PLANE_LENGTH / 25 );
+	/* CAMERA */
+	camera = new THREE.PerspectiveCamera(45, containerWidth / containerHeight, 1, 3000);
+	camera.position.set(0, PLANE_LENGTH / 125, PLANE_LENGTH / 2 + PLANE_LENGTH / 25);
 
+	/* CONTROLS */
+	controls = new THREE.OrbitControls(camera, $container.get(0));
+	controls.noKeys = true;
+	controls.noPan = true;
+	controls.noZoom = true;
+	controls.minPolarAngle = 1.55;
+	controls.maxPolarAngle = 1.55;
+	controls.minAzimuthAngle = 0;
+	controls.maxAzimuthAngle = 0;
 
-  /* CONTROLS */
-  controls = new THREE.OrbitControls( camera, $container.get( 0 ) );
-  controls.noKeys = true;
-  controls.noPan = true;
-  controls.noZoom = true; 
-  controls.minPolarAngle = 1.55;
-  controls.maxPolarAngle = 1.55;
-  controls.minAzimuthAngle = 0;
-  controls.maxAzimuthAngle = 0;
+	/* FLOOR */
+	planeGeometry = new THREE.BoxGeometry(PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1);
+	planeMaterial = new THREE.MeshLambertMaterial({
+		color: 0x78909C
+	});
+	plane = new THREE.Mesh(planeGeometry, planeMaterial);
+	plane.rotation.x = 1.570;
+	plane.receiveShadow = true;
 
+	/* LANDSCAPE */
+	createLandscapeFloors();
+	for (i = 0; i < 60; i += 1) {
+		isEast = false;
+		if (i > 29) {
+			isEast = true;
+		}
+		createMountain(i, isEast);
+	}
 
-  /* FLOOR */
-  planeGeometry = new THREE.BoxGeometry( PLANE_WIDTH, PLANE_LENGTH + PLANE_LENGTH / 10, 1 );
-  planeMaterial = new THREE.MeshLambertMaterial( {
-    color: 0x78909C
-  } );
-  plane = new THREE.Mesh( planeGeometry, planeMaterial );
-  plane.rotation.x = 1.570;
-  plane.receiveShadow = true;
+	skyGeometry = new THREE.BoxGeometry(1200, 800, 1, 1);
+	skyMaterial = new THREE.MeshBasicMaterial({
+		map: THREE.ImageUtils.loadTexture('assets/background.jpg'),
+		depthWrite: false,
+		side: THREE.BackSide
+	});
+	sky = new THREE.Mesh(skyGeometry, skyMaterial);
+	sky.position.y = 300;
+	sky.position.z = -PLANE_LENGTH / 2 + PADDING;
 
+	/* LIGHTS */
+	createSpotlights();
+	directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+	directionalLight.position.set(0, 1, 0);
+	hemisphereLight = new THREE.HemisphereLight(0xFFB74D, 0x37474F, 1);
+	hemisphereLight.position.y = 500;
 
+	/* POWERUPS */
+	startPowerupLogic();
 
-  /* LANDSCAPE */
-  createLandscapeFloors();
-  for ( var i = 0; i < 60; i += 1 ) {
-    var isEast = false;
-    if ( i > 29 ) {
-      isEast = true;
-    }
-    createMountain( i, isEast );
-  }
+	/* HERO */
+	hero = new Hero();
 
-  skyGeometry = new THREE.BoxGeometry( 1200, 800, 1, 1 );
-  skyMaterial = new THREE.MeshBasicMaterial( {
-    map: THREE.ImageUtils.loadTexture( 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/26757/background.jpg' ),
-    depthWrite: false,
-    side: THREE.BackSide
-  } );
-  sky = new THREE.Mesh( skyGeometry, skyMaterial );
-  sky.position.y = 300;
-  sky.position.z = -PLANE_LENGTH / 2 + PADDING;
-
-
-  /* LIGHTS */
-  createSpotlights();
-  directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-  directionalLight.position.set( 0, 1, 0 );
-  hemisphereLight = new THREE.HemisphereLight( 0xFFB74D, 0x37474F, 1 );
-  hemisphereLight.position.y = 500;
-
-
-  /* POWERUPS */
-  startPowerupLogic();
-
-
-  /* HERO */
-  hero = new Hero();
-
-
-  /* SCENE */
-  scene.add( camera, directionalLight, hemisphereLight, plane, sky, hero );
+	/* SCENE */
+	scene.add(camera, directionalLight, hemisphereLight, plane, sky, hero);
 }
 
-function runGame () {
-  window.addEventListener( 'resize', onWindowResize );
-  render();
-  onWindowResize();
+function runGame() {
+	'use strict';
+	window.addEventListener('resize', onWindowResize);
+	render();
+	onWindowResize();
 }
 
 initGame();
