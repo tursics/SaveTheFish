@@ -2,9 +2,11 @@
 /*global $,THREE */
 
 var PLANE_WIDTH = 50,
-    PLANE_LENGTH = 1000,
-    PADDING = PLANE_WIDTH / 5 * 2,
-    POWERUP_COUNT = 10,
+	PLANE_LENGTH = 1000,
+	PADDING = PLANE_WIDTH / 5 * 2,
+	POWERUP_COUNT = 10,
+	FISH_COUNT = 10,
+	PLASTIC_COUNT = 0,
 	PLANE_INDESTRUCTIBLE = false,
 	SHOW_STEREO_EFFEKT = false;
 
@@ -41,96 +43,6 @@ function getRandomInteger(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function PowerUp() {
-	'use strict';
-	var object = {},
-		objectDimension = 0,
-		objectGeometry = {},
-		objectMaterial = {},
-		xPosition = 0,
-		xPositionValues = [],
-		yPosition = 0,
-		yPositionValues = [],
-		zPosition = 0,
-		zPositionValues = [];
-
-	objectDimension = 2;
-
-	xPositionValues = [ -(PLANE_WIDTH - PADDING) / 2, 0, (PLANE_WIDTH - PADDING) / 2];
-	yPositionValues = [ objectDimension + 1 ];
-	zPositionValues = [ -(PLANE_LENGTH - PADDING) / 2];
-
-	xPosition = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
-	yPosition = yPositionValues[getRandomInteger(0, yPositionValues.length - 1)];
-	zPosition = zPositionValues[getRandomInteger(0, zPositionValues.length - 1)];
-
-	objectGeometry = new THREE.BoxGeometry(objectDimension, objectDimension, objectDimension, objectDimension);
-	objectMaterial = new THREE.MeshLambertMaterial({
-		color: 0x29B6F6,
-		shading: THREE.FlatShading
-	});
-	object = new THREE.Mesh(objectGeometry, objectMaterial);
-	object.position.set(xPosition, yPosition, zPosition);
-	object.castShadow = true;
-	object.receiveShadow = true;
-
-	object.animate = function () {
-		if (object.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
-			object.position.z += 10;
-		} else {
-			object.position.x = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
-			object.position.z = -PLANE_LENGTH / 2;
-		}
-	};
-
-	return object;
-}
-
-function FishObject() {
-	'use strict';
-	var object = {},
-		objectDimension = 0,
-		objectGeometry = {},
-		objectMaterial = {},
-		xPosition = 0,
-		xPositionValues = [],
-		yPosition = 0,
-		yPositionValues = [],
-		zPosition = 0,
-		zPositionValues = [];
-
-	objectDimension = 2;
-
-	xPositionValues = [ -(PLANE_WIDTH - PADDING) / 2, 0, (PLANE_WIDTH - PADDING) / 2];
-	yPositionValues = [ objectDimension + 1 ];
-	zPositionValues = [ -(PLANE_LENGTH - PADDING) / 2];
-
-	xPosition = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
-	yPosition = yPositionValues[getRandomInteger(0, yPositionValues.length - 1)];
-	zPosition = zPositionValues[getRandomInteger(0, zPositionValues.length - 1)];
-
-	objectGeometry = new THREE.BoxGeometry(objectDimension, objectDimension, objectDimension, objectDimension);
-	objectMaterial = new THREE.MeshLambertMaterial({
-		color: 0xF629B6,
-		shading: THREE.FlatShading
-	});
-	object = new THREE.Mesh(objectGeometry, objectMaterial);
-	object.position.set(xPosition, yPosition, zPosition);
-	object.castShadow = true;
-	object.receiveShadow = true;
-
-	object.animate = function () {
-		if (object.position.z < PLANE_LENGTH / 2 + PLANE_LENGTH / 10) {
-			object.position.z += 10;
-		} else {
-			object.position.x = xPositionValues[getRandomInteger(0, xPositionValues.length - 1)];
-			object.position.z = -PLANE_LENGTH / 2;
-		}
-	};
-
-	return object;
-}
-
 function detectCollisions(objects) {
 	'use strict';
 	var origin = hero.position.clone(),
@@ -150,7 +62,18 @@ function detectCollisions(objects) {
 		ray = new THREE.Raycaster(origin, directionVector.clone().normalize());
 		intersections = ray.intersectObjects(objects);
 		if (intersections.length > 0 && intersections[0].distance < directionVector.length()) {
-			return true;
+			if (!intersections[0].object.touched) {
+				intersections[0].object.touched = true;
+				if (intersections[0].object.isFish) {
+					--FISH_COUNT;
+				} else {
+					++PLASTIC_COUNT;
+				}
+				if (FISH_COUNT === 0) {
+					return true;
+				}
+console.log('fish: ' + FISH_COUNT + ', plastic: ' + PLASTIC_COUNT);
+			}
 		}
 	}
 	return false;
@@ -164,7 +87,7 @@ function startPowerupLogic() {
 			if (0 === kind) {
 				powerup = new FishObject();
 			} else {
-				powerup = new PowerUp();
+				powerup = new PlasticObject();
 			}
 			powerups.push(powerup);
 			scene.add(powerup);
@@ -213,6 +136,8 @@ function gameOver() {
 	$('#btn-restart').one('click', function () {
 		$('#overlay-gameover').fadeOut(50);
 		POWERUP_COUNT = 10;
+		FISH_COUNT = 10;
+		PLASTIC_COUNT = 0;
 		powerups.forEach(function (element, index) {
 			scene.remove(powerups[index]);
 		});
