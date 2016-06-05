@@ -129,3 +129,118 @@ function FishObject() {
 
 	return object;
 }
+
+function ShapeObject(shape, color, x, y, z, rx, ry, rz, s) {
+	'use strict';
+	var o = {},
+		oGeometryS = {},
+		oMaterialS = {},
+		oGeometryL = {},
+		oMaterialL = {};
+    o = new THREE.Group();
+
+// flat shape
+	  oGeometryS = new THREE.ShapeGeometry( shape );
+	  oMaterialS = new THREE.MeshBasicMaterial( { color: color, overdraw: 0.5 } );    
+
+	  var mesh = new THREE.Mesh( oGeometryS, oMaterialS );
+	  mesh.position.set( x, y, z );
+	  mesh.rotation.set( rx, ry, rz );
+	  mesh.scale.set( s, s, s );
+	  o.add( mesh );
+
+// line
+	  oGeometryL = shape.createPointsGeometry();
+	  oGeometryL.vertices.push( oGeometryL.vertices[ 0 ].clone() );
+
+	  oMaterialL = new THREE.LineBasicMaterial( { linewidth: 10, color: 0x333333, transparent: true } );
+
+	  var line = new THREE.Line( oGeometryL, oMaterialL );
+	  line.position.set( x, y, z );
+	  line.rotation.set( rx, ry, rz );
+	  line.scale.set( s, s, s );
+	  o.add( line );
+
+
+    o.addShapeGroup = function( shape, color, x, y, z, rx, ry, rz, s ) {
+	    'use strict';
+      var g = new THREE.Group();
+	    //group.position.y = 50;
+	    // flat shape
+
+	    var geometry = new THREE.ShapeGeometry( shape );
+	    var material = new THREE.MeshBasicMaterial( { color: color, overdraw: 0.5 } );
+
+	    var mesh = new THREE.Mesh( geometry, material );
+	    mesh.position.set( x, y, z );
+	    mesh.rotation.set( rx, ry, rz );
+	    mesh.scale.set( s, s, s );
+	    g.add( mesh );
+
+	    // line
+
+	    var geometry = shape.createPointsGeometry();
+	    geometry.vertices.push( geometry.vertices[ 0 ].clone() );
+
+	    var material = new THREE.LineBasicMaterial( { linewidth: 10, color: 0x333333, transparent: true } );
+
+	    var line = new THREE.Line( geometry, material );
+	    line.position.set( x, y, z );
+	    line.rotation.set( rx, ry, rz );
+	    line.scale.set( s, s, s );
+	    g.add( line );
+      return g;
+    }
+  return o;
+}
+
+// Fish
+
+x = y = 0;
+
+var fishShape = new THREE.Shape();
+
+fishShape.moveTo(x,y);
+fishShape.quadraticCurveTo(x + 50, y - 80, x + 90, y - 10);
+fishShape.quadraticCurveTo(x + 100, y - 10, x + 115, y - 40);
+fishShape.quadraticCurveTo(x + 115, y, x + 115, y + 40);
+fishShape.quadraticCurveTo(x + 100, y + 10, x + 90, y + 10);
+fishShape.quadraticCurveTo(x + 50, y + 80, x, y);
+
+
+
+
+// Smiley
+
+var smileyShape = new THREE.Shape();
+smileyShape.moveTo( 80, 40 );
+smileyShape.absarc( 40, 40, 40, 0, Math.PI*2, false );
+
+var smileyEye1Path = new THREE.Path();
+smileyEye1Path.moveTo( 35, 20 );
+// smileyEye1Path.absarc( 25, 20, 10, 0, Math.PI*2, true );
+smileyEye1Path.absellipse( 25, 20, 10, 10, 0, Math.PI*2, true );
+
+smileyShape.holes.push( smileyEye1Path );
+
+var smileyEye2Path = new THREE.Path();
+smileyEye2Path.moveTo( 65, 20 );
+smileyEye2Path.absarc( 55, 20, 10, 0, Math.PI*2, true );
+smileyShape.holes.push( smileyEye2Path );
+
+var smileyMouthPath = new THREE.Path();
+/*/ugly box mouth
+smileyMouthPath.moveTo( 20, 40 );
+smileyMouthPath.lineTo( 60, 40 );
+smileyMouthPath.lineTo( 60, 60 );
+smileyMouthPath.lineTo( 20, 60 );
+smileyMouthPath.lineTo( 20, 40 );
+*/
+smileyMouthPath.moveTo( 20, 40 );
+smileyMouthPath.quadraticCurveTo( 40, 60, 60, 40 );
+smileyMouthPath.bezierCurveTo( 70, 45, 70, 50, 60, 60 );
+smileyMouthPath.quadraticCurveTo( 40, 80, 20, 60 );
+smileyMouthPath.quadraticCurveTo( 5, 50, 20, 40 );
+
+smileyShape.holes.push( smileyMouthPath );
+
