@@ -46,25 +46,39 @@ function getRandomInteger(min, max) {
 function detectCollisions(objects) {
 	'use strict';
 	var origin = hero.position.clone(),
+		x = 0,
 		v = 0,
 		vMax = 0,
 		localVertex,
 		globalVertex,
 		directionVector,
 		ray,
-		intersections;
+		intersections,
+		heroPos,
+		obj;
 
-	for (v = 0, vMax = hero.geometry.vertices.length; v < vMax; v += 1) {
-		localVertex = hero.geometry.vertices[v].clone();
-		globalVertex = localVertex.applyMatrix4(hero.matrix);
-		directionVector = globalVertex.sub(hero.position);
+	if (hero.position.x < (PLANE_WIDTH - PADDING) / -4) {
+		heroPos = -1;
+	} else if (hero.position.x > (PLANE_WIDTH - PADDING) / 4) {
+		heroPos = 1;
+	} else {
+		heroPos = 0;
+	}
 
-		ray = new THREE.Raycaster(origin, directionVector.clone().normalize());
-		intersections = ray.intersectObjects(objects);
-		if (intersections.length > 0 && intersections[0].distance < directionVector.length()) {
-			if (!intersections[0].object.touched) {
-				intersections[0].object.touched = true;
-				if (intersections[0].object.isFish) {
+	for (v = 0; v < powerups.length; ++v) {
+		obj = powerups[v];
+		x = obj.position.x;
+		if ((heroPos === -1) && (x < (PLANE_WIDTH - PADDING) / -4)) {
+		} else if ((heroPos === 0) && (x > (PLANE_WIDTH - PADDING) / -4) && (x < (PLANE_WIDTH - PADDING) / 4)) {
+		} else if ((heroPos === 1) && (x > (PLANE_WIDTH - PADDING) / 4)) {
+		} else {
+			continue;
+		}
+
+		if (obj.position.z < (-PLANE_LENGTH / 2.5)) {
+			if (!obj.touched) {
+				obj.touched = true;
+				if (obj.isFish) {
 					--FISH_COUNT;
 				} else {
 					++PLASTIC_COUNT;
@@ -76,6 +90,7 @@ function detectCollisions(objects) {
 			}
 		}
 	}
+
 	return false;
 }
 
@@ -86,11 +101,13 @@ function startPowerupLogic() {
 			var kind = getRandomInteger(0, 2);
 			if (0 === kind) {
 				powerup = new FishObject();
+				powerups.push(powerup);
+				scene.add(powerup);
 			} else {
 				powerup = new PlasticObject();
 			}
-			powerups.push(powerup);
-			scene.add(powerup);
+//			powerups.push(powerup);
+//			scene.add(powerup);
 		}
 
 	}, 4000);
