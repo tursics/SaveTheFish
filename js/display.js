@@ -17,6 +17,7 @@ function showStartGame() {
 
 		initGame(false);
 		runGame();
+		startOrientation ();
 	});
 
 	$('#btn-cardboard').one('click', function () {

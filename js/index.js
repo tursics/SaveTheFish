@@ -38,6 +38,9 @@ var axishelper = {},
     skyMaterial = {},
     skyTexture = {};
 
+var gFish,
+  gSmiley;
+
 function getRandomInteger(min, max) {
 	'use strict';
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -262,6 +265,12 @@ function initGame(useStereoEffects) {
 
 	/* SCENE */
 	scene.add(camera, directionalLight, hemisphereLight, plane, sky, hero);
+
+	/* some Shapes */
+	gFish = new ShapeObject( fishShape, 0x22aa22, 200, 110, 0, 0, 0, 0, 0.5 );
+	scene.add( gFish );
+  gSmiley = new ShapeObject( smileyShape, 0xee00ff, -220, 130, 0, 0, 0, Math.PI, 0.5 );
+	scene.add( gSmiley );
 }
 
 function runGame() {
