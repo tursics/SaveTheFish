@@ -31,6 +31,7 @@ function showStartGame() {
 function showGameOver() {
 	'use strict';
 
+	$('#gameover-text').text('Super! Du hast das Meer um ' + PLASTIC_COUNT + ' Müllstücke gesäubert');
 	$('#overlay-gameover').fadeIn(100);
 
 	$('#btn-restart').one('click', function () {
