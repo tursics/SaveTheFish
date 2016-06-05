@@ -1,5 +1,32 @@
 /*jslint browser: true*/
-/*global $,THREE */
+/*global $,THREE,PLANE_LENGTH,PLANE_WIDTH,PADDING,getRandomInteger */
+
+function HeroObject() {
+	'use strict';
+	var hero = {},
+		heroGeometry = {},
+		heroMaterial = {};
+
+	heroGeometry = new THREE.CylinderGeometry(0, 2, 5, 10);
+	heroMaterial = new THREE.MeshLambertMaterial({
+		color: 0xE91E63,
+		shading: THREE.FlatShading
+	});
+	hero = new THREE.Mesh(heroGeometry, heroMaterial);
+	hero.castShadow = true;
+	hero.position.set(0, 5, (PLANE_LENGTH / 2));
+	hero.rotation.x = 0.785;
+
+	window.addEventListener('keydown', function (event) {
+		if (event.keyCode === 37 && hero.position.x !== -(PLANE_WIDTH - PADDING) / 2) {
+			hero.position.x -= (PLANE_WIDTH - PADDING) / 2;
+		} else if (event.keyCode === 39 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
+			hero.position.x += (PLANE_WIDTH - PADDING) / 2;
+		}
+	});
+
+	return hero;
+}
 
 function PlasticObject() {
 	'use strict';
