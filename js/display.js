@@ -1,10 +1,30 @@
 /*jslint browser: true*/
-/*global $,THREE,FISH_COUNT,PLASTIC_COUNT,restartGame */
+/*global $,THREE,FISH_COUNT,PLASTIC_COUNT,restartGame,initGame,runGame */
 
 function updateGameDisplay() {
 	'use strict';
 
 	console.log('fish: ' + FISH_COUNT + ', plastic: ' + PLASTIC_COUNT);
+}
+
+function showStartGame() {
+	'use strict';
+
+	$('#overlay-startgame').fadeIn(100);
+
+	$('#btn-start').one('click', function () {
+		$('#overlay-startgame').fadeOut(50);
+
+		initGame(false);
+		runGame();
+	});
+
+	$('#btn-cardboard').one('click', function () {
+		$('#overlay-startgame').fadeOut(50);
+
+		initGame(true);
+		runGame();
+	});
 }
 
 function showGameOver() {

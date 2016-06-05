@@ -1,5 +1,5 @@
 /*jslint browser: true*/
-/*global $,THREE,HeroObject,PlasticObject,FishObject,updateGameDisplay,showGameOver,createLandscapeFloors,createMountain,createSpotlights */
+/*global $,THREE,HeroObject,PlasticObject,FishObject,updateGameDisplay,showStartGame,showGameOver,createLandscapeFloors,createMountain,createSpotlights */
 
 var PLANE_WIDTH = 50,
 	PLANE_LENGTH = 1000,
@@ -159,11 +159,12 @@ function onWindowResize() {
 	renderer.setSize(containerWidth, containerHeight);
 }
 
-function initGame() {
+function initGame(useStereoEffects) {
 	'use strict';
 	var i = 0,
 		isEast = false;
 
+	SHOW_STEREO_EFFEKT = useStereoEffects;
 	THREE.ImageUtils.crossOrigin = '';
 
 	$container = $('#container');
@@ -253,5 +254,4 @@ function runGame() {
 	onWindowResize();
 }
 
-initGame();
-runGame();
+showStartGame();

@@ -14,7 +14,7 @@
 			font-style: normal;
 		}
 
-		html,body,#container,#overlay-gameover {
+		html,body,#container,#overlay-gameover,#overlay-startgame {
 			background-color: #000000;
 			font-family: 'Life Savers', sans-serif;
 			font-weight: 700;
@@ -32,7 +32,7 @@
 			width: 1024px;
 			height: 768px;
 		}
-		#overlay-gameover {
+		#overlay-gameover,#overlay-startgame {
 			text-align: center;
 			background-color: rgba(0, 0, 0, 0.875);
 			display: none;
@@ -68,6 +68,13 @@
 </head>
 <body>
 	<div id="container"></div>
+	<div id="overlay-startgame">
+		<div class="message-container">
+			<p>Rette die Fische</p>
+			<button id="btn-start">Starten</button>
+			<button id="btn-cardboard">Cardboard</button>
+		</div>
+	</div>
 	<div id="overlay-gameover">
 		<div class="message-container">
 			<p>Spielende!</p>
