@@ -263,7 +263,7 @@ function ShapeObject(shape, color, x, y, z, rx, ry, rz, s) {
 x = y = 0;
 
 var fishShape = new THREE.Shape();
-
+x = -260;
 fishShape.moveTo(x,y);
 fishShape.quadraticCurveTo(x + 50, y - 80, x + 90, y - 10);
 fishShape.quadraticCurveTo(x + 100, y - 10, x + 115, y - 40);

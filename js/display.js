@@ -5,6 +5,10 @@ function updateGameDisplay() {
 	'use strict';
 
 	console.log('fish: ' + FISH_COUNT + ', plastic: ' + PLASTIC_COUNT);
+
+//gFish.material[].opacity = 0;
+// gFish.uniforms['color'].value.setRGB(0.8, 0.8, 0.8);
+	// fishShape
 }
 
 function showStartGame() {
