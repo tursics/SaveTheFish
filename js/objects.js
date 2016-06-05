@@ -23,7 +23,11 @@ function HeroObject() {
 		} else if (event.keyCode === 39 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
 			hero.position.x += (PLANE_WIDTH - PADDING) / 2;
 		}
+
 	});
+
+
+
 
 	return hero;
 }
@@ -128,4 +132,42 @@ function FishObject() {
 	};
 
 	return object;
+}
+
+
+function handleOrientation(event) {
+	if(startOrientationPoint=='x') {
+		// not detection
+	} else if(startOrientationPoint=='') {
+		startOrientationPoint = Math.round(event.alpha);
+	} else {
+			var alpha    = Math.round(event.alpha);
+			if(startOrientationPoint<180) {
+				var distance = (alpha-startOrientationPoint);
+				var position = 'middle';
+				var d = 20
+				if(distance<(360-d) && distance>180) position = 'right';
+				else if(distance>d && distance<180) position = 'left';
+			}  else {
+				var distance = (alpha-startOrientationPoint);
+				var position = 'middle';
+				var d = 20
+				if(distance<-d && distance<-180) position = 'left';
+				else if(distance<-(d) && distance>-180) position = 'right';
+			}
+
+			if(position=='middle') hero.position.x = 0;
+			else if(position=='left') hero.position.x = -15;
+			else if(position=='right') hero.position.x = 15;
+			//return position;
+
+	}
+}
+var startOrientationPoint  = '';
+function startOrientation () {
+	if(startOrientationPoint == ''){
+		window.addEventListener("deviceorientation", handleOrientation, true);
+	}
+	startOrientationPoint  = '';
+
 }
