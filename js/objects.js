@@ -23,7 +23,7 @@ function HeroObject() {
 		} else if (event.keyCode === 39 && hero.position.x !== (PLANE_WIDTH - PADDING) / 2) {
 			hero.position.x += (PLANE_WIDTH - PADDING) / 2;
 		}
-
+		// console.log('# '+hero.position.x = -15);
 	});
 
 
@@ -156,6 +156,7 @@ function FishObject() {
 
 
 function handleOrientation(event) {
+
 	if(startOrientationPoint=='x') {
 		// not detection
 	} else if(startOrientationPoint=='') {
@@ -177,8 +178,9 @@ function handleOrientation(event) {
 			}
 
 			if(position=='middle') hero.position.x = 0;
-			else if(position=='left') hero.position.x = -15;
-			else if(position=='right') hero.position.x = 15;
+			else if(position=='left') hero.position.x = -8;
+			else if(position=='right') hero.position.x = 8;
+			// console.log(position);
 			//return position;
 
 	}

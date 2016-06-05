@@ -22,7 +22,7 @@ function showStartGame() {
 
 	$('#btn-cardboard').one('click', function () {
 		$('#overlay-startgame').fadeOut(50);
-
+		startOrientation ();
 		initGame(true);
 		runGame();
 	});
